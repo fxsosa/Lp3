@@ -1,0 +1,99 @@
+#+TITLE: Resumen Lp3
+* Capitulo 1
+** Valores de retorno de funciones
+-Generalmente se retorna -1 o a veces NULL para indicar error
+-Variable _errno_ valor en donde se indica el error especifico
+-_perror_: imprime un mensaje de error del sistema correspondiente al valor de _errno_
+  #+begin_src C
+#include <stdio.h>
+
+    void perror(const char *s);
+
+    int fildes;
+    if (close(fildes) == -1)
+        perror("Failed to close the file");
+  #+end_src
+ Output: Failed to close the file: invalid file descriptor
+[[file:Labs/Cap1 Cap2/perror_ejemplo.c][Ejemplo perror]]
+
+ -_strerror_: retorna una cadena describiendo el error enumerado
+ #+begin_src C
+    #include <string.h>
+
+    char *strerror(int errnum);
+
+    int fildes;
+    if (close(fildes) == -1)
+        fprintf(stderr, "Failed to close file descriptor %d: %s\n", fildes, strerror(errno));
+
+ #+end_src
+[[file:Labs/Cap1 Cap2/strerror_ejemplo.c][Ejemplo strerror]]
+
+** Matriz de argumentos
+En el main argv
+[[file:Labs/Cap1 Cap2/args_ejemplo.c][Ejemplo argv]]
+
+** Funcion strtok
+Divide la cadena en tokens segun el delim, la cadena a parsear debe especificarse con su puntero una sola vez, despues queda guardada como variable estatica
+#+begin_src C
+#include <string.h>
+
+char *strtok(char *str, const char *delim);
+
+char str[80] = "This is - www.tutorialspoint.com - website";
+const char delim[2] = "-";
+char *token;
+
+/* get the first token */
+token = strtok(str, delim);
+
+/* walk through other tokens */
+while( token != NULL ) {
+    printf( " %s\n", token );
+
+    token = strtok(NULL, delim);
+}
+#+end_src
+Output: This is
+  www.tutorialspoint.com
+  website
+
+** getenv
+Busca en la lista de entorno para encontrar el name de la variable de entorno para luego retornar su value
+#+begin_src C
+#include <stdlib.h>
+
+char *getenv(const char *name);
+
+char *pathPtr;
+
+pathPtr = (char *) getenv("PATH");
+if ( pathPtr == NULL )
+    printf( "No path environment variable was found\n" );
+else
+   printf( "Contents of Path: %s\n", pathPtr );
+#+end_src
+[[file:Labs/Cap1 Cap2/valor_variable_entorno_arg.c][Ejemplo getenv]]
+
+** environ
+Es una variable que apunta a un vector Environ, que contiene variablesde entorno
+#+begin_src C
+extern char **environ;
+#+end_src
+[[file:Labs/Cap1 Cap2/lista_variables_entorno_ejemplo.c][Ejemplo environ]]
+
+** exit
+Causa una terminacion nomal del proceso
+#+begin_src C
+#include <stdlib.h>
+
+void exit(int status);
+#+end_src
+
+** atexit
+apila procesos, "a la salida ejecutar"
+#+begin_src C
+#include <stdlib.h>
+
+int atexit(void (*function)(void));
+#+end_src
